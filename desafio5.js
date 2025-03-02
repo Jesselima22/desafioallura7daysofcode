@@ -9,45 +9,82 @@ function listaDeCompras() {
         Outros: []
     };
 
-    // Loop principal para adicionar itens
+    // Função para exibir a lista completa
+    function exibirLista() {
+        let mensagem = "Lista de compras:\n";
+        for (const [categoria, itens] of Object.entries(lista)) {
+            if (itens.length > 0) {
+                mensagem += `    ${categoria}: ${itens.join(", ")}\n`;
+            }
+        }
+        return mensagem;
+    }
+
+    // Loop principal
     while (true) {
-        // Pergunta se o usuário deseja adicionar um item
-        const desejaAdicionar = prompt("Deseja adicionar um item à lista de compras? (Sim/Não)");
+        // Pergunta ao usuário o que deseja fazer
+        const opcao = prompt(`O que você deseja fazer?
+1 - Adicionar um item à lista
+2 - Remover um item da lista
+3 - Encerrar o programa`);
 
-        if (desejaAdicionar.toLowerCase() === "não" || desejaAdicionar.toLowerCase() === "nao") {
-            break; // Sai do loop se o usuário não quiser adicionar mais itens
+        if (opcao === "3") {
+            alert("Programa encerrado.\n" + exibirLista());
+            break; // Sai do loop e encerra o programa
         }
 
-        if (desejaAdicionar.toLowerCase() !== "sim") {
-            alert("Resposta inválida. Por favor, responda com 'Sim' ou 'Não'.");
-            continue; // Volta ao início do loop
-        }
-
-        // Pergunta o nome do item
-        const item = prompt("Qual comida você deseja inserir?");
-
-        // Pergunta a categoria do item
-        const categoria = prompt(`Em qual categoria "${item}" se encaixa? 
+        if (opcao === "1") {
+            // Adicionar um item
+            const item = prompt("Qual comida você deseja inserir?");
+            const categoria = prompt(`Em qual categoria "${item}" se encaixa? 
 Opções: Frutas, Laticínios, Congelados, Doces, Outros`);
 
-        // Verifica se a categoria é válida
-        if (lista.hasOwnProperty(categoria)) {
-            lista[categoria].push(item); // Adiciona o item à categoria correspondente
+            if (lista.hasOwnProperty(categoria)) {
+                lista[categoria].push(item);
+                alert(`"${item}" foi adicionado à categoria "${categoria}".`);
+            } else {
+                alert("Categoria inválida! O item será adicionado à categoria 'Outros'.");
+                lista["Outros"].push(item);
+            }
+        } else if (opcao === "2") {
+            // Remover um item
+            let temItens = false;
+            for (const itens of Object.values(lista)) {
+                if (itens.length > 0) {
+                    temItens = true;
+                    break;
+                }
+            }
+
+            if (!temItens) {
+                alert("Não há itens na lista para remover.");
+                continue;
+            }
+
+            // Exibe a lista atual
+            alert(exibirLista());
+
+            // Pede ao usuário o item que deseja remover
+            const itemRemover = prompt("Qual item você deseja remover?");
+
+            let removido = false;
+            for (const [categoria, itens] of Object.entries(lista)) {
+                const index = itens.indexOf(itemRemover);
+                if (index !== -1) {
+                    itens.splice(index, 1); // Remove o item
+                    removido = true;
+                    alert(`"${itemRemover}" foi removido da categoria "${categoria}".`);
+                    break;
+                }
+            }
+
+            if (!removido) {
+                alert(`Não foi possível encontrar o item "${itemRemover}" na lista.`);
+            }
         } else {
-            alert("Categoria inválida! O item será adicionado à categoria 'Outros'.");
-            lista["Outros"].push(item); // Adiciona o item à categoria "Outros"
+            alert("Opção inválida. Por favor, escolha entre 1, 2 ou 3.");
         }
     }
-
-    // Exibe a lista de compras agrupada por categoria
-    let mensagemFinal = "Lista de compras:\n";
-    for (const [categoria, itens] of Object.entries(lista)) {
-        if (itens.length > 0) {
-            mensagemFinal += `    ${categoria}: ${itens.join(", ")}\n`;
-        }
-    }
-
-    alert(mensagemFinal);
 }
 
 // Inicia o programa
